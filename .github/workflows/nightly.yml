@@ -41,7 +41,7 @@ jobs:
           gh release view nightly --json assets --jq '.assets[].name' | xargs -I {} gh release delete-asset nightly {} --yes || true
 
   release-apple-silicon:
-    runs-on: macos-14
+    runs-on: macos-15
     needs: prepare-release
 
     steps:
@@ -69,7 +69,7 @@ jobs:
           gh release upload "$RELEASE_VERSION" "${RELEASE_VERSION}-macos-aarch64.zip#$PROJECT_NAME-${RELEASE_VERSION}-macos-aarch64.zip" --clobber
 
   release-apple-x86:
-    runs-on: macos-13
+    runs-on: macos-15-intel
     needs: prepare-release
 
     steps:
