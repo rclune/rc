@@ -19,11 +19,10 @@ pub struct ContainerPathShim {
 impl ContainerPathShim {
     pub const BIN_SHIMS: [&str; 3] = ["docker", "singularity", "apptainer"];
 
-
-
     pub fn new() -> Self {
-        let root = std::path::PathBuf::from("target/tmp");
-        eprintln!("root:{root:?}");
+        let root = std::path::PathBuf::from("target/fixtures");
+        std::fs::create_dir_all(&root).expect("create fixtures dir");
+        //eprintln!("root:{root:?}");
         let dir = TempDir::new_in(root).expect("create temp dir");
 
         // add a label directory inside for readability
@@ -61,13 +60,15 @@ impl ContainerPathShim {
     /// Example use in a test:
     /// `let cmd = format!("{} && my-runner ...", shim.export_path_cmd());`
     pub fn export_path_cmd(&self) -> String {
-        format!("export PATH='{}'", self.bin_dir().display())
+        format!("export PATH={}:$PATH", self.bin_dir().display())
     }
 
     /// Returns env overrides you can pass to `std::process::Command` directly.
     /// This mirrors what `export_path_cmd()` would do in a shell.
     pub fn env_overrides(&self) -> [(&'static str, String); 1] {
-        [("PATH", self.bin_dir().display().to_string())]
+        let current_path = std::env::var("PATH").unwrap_or_default();
+        let new_path = format!("{}:{}", self.bin_dir().display(), current_path);
+        [("PATH", new_path)]
     }
 }
 
