@@ -145,7 +145,7 @@ jobs:
           version=${{ steps.get_release_version.outputs.version }}
           gh release upload "$version" "${version}-linux-x86.zip#$PROJECT_NAME-${version}-linux-x86.zip"
 
-  release-linux-arm:
+  release-linux-arm64:
     runs-on: ubuntu-24.04-arm
 
     steps:
@@ -170,14 +170,14 @@ jobs:
       - name: Create Zip Archive
         run: |
           version=$(echo ${{ steps.get_release_version.outputs.version }})
-          zip -j "$version-linux-arm.zip" target/aarch64-unknown-linux-musl/release/$PROJECT_NAME
+          zip -j "$version-linux-arm64.zip" target/aarch64-unknown-linux-musl/release/$PROJECT_NAME
 
       - name: Upload Release Artifact with gh
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           version=${{ steps.get_release_version.outputs.version }}
-          gh release upload "$version" "${version}-linux-arm.zip#$PROJECT_NAME-${version}-linux-arm.zip"
+          gh release upload "$version" "${version}-linux-arm64.zip#$PROJECT_NAME-${version}-linux-arm64.zip"
 
   release-windows-x86:
     runs-on: ubuntu-22.04
@@ -216,7 +216,7 @@ jobs:
           version=${{ steps.get_release_version.outputs.version }}
           gh release upload "$version" "${version}-windows-x86.zip#$PROJECT_NAME-${version}-windows-x86.zip"
 
-  release-windows-arm:
+  release-windows-arm64:
     runs-on: windows-2022
 
     steps:

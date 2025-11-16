@@ -123,7 +123,7 @@ jobs:
         run: |
           gh release upload "$RELEASE_VERSION" "${RELEASE_VERSION}-linux-x86.zip#$PROJECT_NAME-${RELEASE_VERSION}-linux-x86.zip" --clobber
 
-  release-linux-arm:
+  release-linux-arm64:
     runs-on: ubuntu-24.04-arm
     needs: prepare-release
 
@@ -143,13 +143,13 @@ jobs:
 
       - name: Create Zip Archive
         run: |
-          zip -j "$RELEASE_VERSION-linux-arm.zip" target/aarch64-unknown-linux-musl/release/$PROJECT_NAME
+          zip -j "$RELEASE_VERSION-linux-arm64.zip" target/aarch64-unknown-linux-musl/release/$PROJECT_NAME
 
       - name: Upload Release Artifact with gh
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          gh release upload "$RELEASE_VERSION" "${RELEASE_VERSION}-linux-arm.zip#$PROJECT_NAME-${RELEASE_VERSION}-linux-arm.zip" --clobber
+          gh release upload "$RELEASE_VERSION" "${RELEASE_VERSION}-linux-arm64.zip#$PROJECT_NAME-${RELEASE_VERSION}-linux-arm64.zip" --clobber
 
   release-windows-x86:
     runs-on: ubuntu-22.04
@@ -182,7 +182,7 @@ jobs:
         run: |
           gh release upload "$RELEASE_VERSION" "${RELEASE_VERSION}-windows-x86.zip#$PROJECT_NAME-${RELEASE_VERSION}-windows-x86.zip" --clobber
 
-  release-windows-arm:
+  release-windows-arm64:
     runs-on: windows-2022
     needs: prepare-release
 
