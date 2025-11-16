@@ -123,6 +123,34 @@ jobs:
         run: |
           gh release upload "$RELEASE_VERSION" "${RELEASE_VERSION}-linux-x86.zip#$PROJECT_NAME-${RELEASE_VERSION}-linux-x86.zip" --clobber
 
+  release-linux-arm:
+    runs-on: ubuntu-24.04-arm
+    needs: prepare-release
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install Rust
+        run: |
+          curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
+          export PATH="$HOME/.cargo/bin:$PATH"
+          rustup default stable
+          rustup target add aarch64-unknown-linux-musl
+
+      - name: Build Rust Code
+        run: cargo build --release --target aarch64-unknown-linux-musl
+
+      - name: Create Zip Archive
+        run: |
+          zip -j "$RELEASE_VERSION-linux-arm.zip" target/aarch64-unknown-linux-musl/release/$PROJECT_NAME
+
+      - name: Upload Release Artifact with gh
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release upload "$RELEASE_VERSION" "${RELEASE_VERSION}-linux-arm.zip#$PROJECT_NAME-${RELEASE_VERSION}-linux-arm.zip" --clobber
+
   release-windows-x86:
     runs-on: ubuntu-22.04
     needs: prepare-release
