@@ -215,3 +215,40 @@ jobs:
         run: |
           version=${{ steps.get_release_version.outputs.version }}
           gh release upload "$version" "${version}-windows-x86.zip#$PROJECT_NAME-${version}-windows-x86.zip"
+
+  release-windows-arm:
+    runs-on: ubuntu-22.04
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install gcc-mingw-w64-aarch64
+        run: sudo apt-get update && sudo apt-get install -y gcc-mingw-w64-aarch64-win32
+
+      - name: Install Rust
+        run: |
+          curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
+          export PATH="$HOME/.cargo/bin:$PATH"
+          rustup default stable
+          rustup target add aarch64-pc-windows-gnullvm
+
+      - name: Build Rust Code
+        run: cargo build --release --target aarch64-pc-windows-gnullvm
+
+      - name: Get Release Version
+        id: get_release_version
+        run: |
+          echo "version=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
+
+      - name: Create Zip Archive
+        run: |
+          version=$(echo ${{ steps.get_release_version.outputs.version }})
+          zip -j "$version-windows-arm.zip" target/aarch64-pc-windows-gnullvm/release/$PROJECT_NAME.exe
+
+      - name: Upload Release Artifact with gh
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          version=${{ steps.get_release_version.outputs.version }}
+          gh release upload "$version" "${version}-windows-arm.zip#$PROJECT_NAME-${version}-windows-arm.zip"
