@@ -11,13 +11,14 @@ pub fn run_docker(Image(image): Image, args: Vec<String>, working_dir: PathBuf) 
         println!("With arguments: {:?}", args);
     }
 
-    let uid = users::get_current_uid();
-    let gid = users::get_current_gid();
+    let mut options = format!("--volume {}:/w --workdir /w", working_dir.display());
 
-    let options = format!(
-        "--volume {}:/w --user {uid}:{gid} --workdir /w",
-        working_dir.display()
-    );
+    #[cfg(unix)]
+    {
+        let uid = users::get_current_uid();
+        let gid = users::get_current_gid();
+        options.push_str(&format!(" --user {uid}:{gid}"));
+    }
 
     let command_line = format!("docker run {options} {image} {}", args.join(" "));
 

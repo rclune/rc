@@ -32,16 +32,19 @@ fn docker_rosetta_score() {
 
     let log_contents = std::fs::read_to_string(&log_file).expect("Failed to read log file");
 
-    let command_line_parts = [
+    let mut command_line_parts = vec![
         "docker run".into(),
         format!("--volume {}:/w", work_dir.path().to_str().unwrap()),
-        format!(
-            "--user {}:{}",
-            users::get_current_uid(),
-            users::get_current_gid()
-        ),
-        "--workdir /w".into(),
     ];
+
+    #[cfg(unix)]
+    command_line_parts.push(format!(
+        "--user {}:{}",
+        users::get_current_uid(),
+        users::get_current_gid()
+    ));
+
+    command_line_parts.push("--workdir /w".into());
 
     for command_line_part in &command_line_parts {
         assert!(
