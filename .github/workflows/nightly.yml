@@ -183,7 +183,7 @@ jobs:
           gh release upload "$RELEASE_VERSION" "${RELEASE_VERSION}-windows-x86.zip#$PROJECT_NAME-${RELEASE_VERSION}-windows-x86.zip" --clobber
 
   release-windows-arm:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-22.04-arm
     needs: prepare-release
 
     steps:

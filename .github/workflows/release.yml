@@ -217,7 +217,7 @@ jobs:
           gh release upload "$version" "${version}-windows-x86.zip#$PROJECT_NAME-${version}-windows-x86.zip"
 
   release-windows-arm:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-22.04-arm
 
     steps:
       - name: Checkout code
