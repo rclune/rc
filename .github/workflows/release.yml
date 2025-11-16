@@ -223,8 +223,8 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Install gcc-mingw-w64-aarch64
-        run: sudo apt-get update && sudo apt-get install -y gcc-mingw-w64-aarch64-win32
+      - name: Install LLVM and Clang
+        run: sudo apt-get update && sudo apt-get install -y llvm clang
 
       - name: Install Rust
         run: |
